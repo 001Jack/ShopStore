@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="/static/store_static/jquery/jquery.js"></script>
+<script src="/static/store_static/vue/vue.js"></script>
+
+
+</body>
+{% verbatim myblock %}
+    <div id="content">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>商品编号</th>
+                <th>商品名称</th>
+                <th>商品数量</th>
+                <th>商品价格</th>
+                <th>商品保质期</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="goods in goods_data">
+                <th>{{ goods.id }}</th>
+                <th>{{ goods.name }}</th>
+                <th>{{ goods.number }}</th>
+                <th>{{ goods.price }}</th>
+                <th>{{ goods.safe_date }}</th>
+                <th>{{ goods.description }}</th>
+                <th>
+                    <button v-on:click="ok">点我</button>
+                </th>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+{% endverbatim myblock %}
+    <script>
+        var vue = new Vue(
+            {
+                el: '#content',
+                data: {
+                    goods_data: [
+                        {
+                            "id": 1,
+                            "name": "西红柿",
+                            "number": 10,
+                            "status": 0,
+                            "price": 121.0,
+                            "picture": "/media/02_rWyss5n.png",
+                            "safe_date": "2019-10-11",
+                            "description": "11111"
+                        },
+                        {
+                            "id": 2,
+                            "name": "番茄",
+                            "number": 20,
+                            "status": 0,
+                            "price": 100.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-11-11",
+                            "description": ""
+                        },
+                        {
+                            "id": 3,
+                            "name": "圣女果",
+                            "number": 200,
+                            "status": 0,
+                            "price": 1000.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-11-12",
+                            "description": "好吃"
+                        },
+                        {
+                            "id": 4,
+                            "name": "黄瓜",
+                            "number": 2000,
+                            "status": 0,
+                            "price": 2.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-10-13",
+                            "description": "便宜"
+                        },
+                        {
+                            "id": 5,
+                            "name": "冬瓜",
+                            "number": 2000,
+                            "status": 0,
+                            "price": 100.0,
+                            "picture": "/media/default.jpg",
+                            "safe_date": "2019-11-14",
+                            "description": "啥玩意"
+                        },
+                        {
+                            "id": 6,
+                            "name": "西瓜",
+                            "number": 2000,
+                            "status": 1,
+                            "price": 10.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB_xgqQOWb.png",
+                            "safe_date": "2019-11-15",
+                            "description": "买西瓜"
+                        },
+                        {
+                            "id": 7,
+                            "name": "南瓜",
+                            "number": 2000,
+                            "status": 1,
+                            "price": 12.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-11-16",
+                            "description": ""
+                        },
+                        {
+                            "id": 8,
+                            "name": "核桃",
+                            "number": 14,
+                            "status": 1,
+                            "price": 1000.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-11-16",
+                            "description": ""
+                        },
+                        {
+                            "id": 9,
+                            "name": "瓜子",
+                            "number": 121,
+                            "status": 1,
+                            "price": 10023.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-11-16",
+                            "description": ""
+                        },
+                        {
+                            "id": 10,
+                            "name": "花生",
+                            "number": 2000,
+                            "status": 1,
+                            "price": 112312.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2019-11-17",
+                            "description": ""
+                        },
+                        {
+                            "id": 11,
+                            "name": "苦瓜",
+                            "number": 2000,
+                            "status": 1,
+                            "price": 10.0,
+                            "picture": "/media/CSRF%E8%B7%A8%E5%9F%9F%E6%94%BB%E5%87%BB.png",
+                            "safe_date": "2030-11-11",
+                            "description": "真苦"
+                        }
+                    ],
+                },
+                methods: {
+                    "ok": function () {
+                       alert('aaa')
+                    }
+                }
+            }
+        )
+
+    </script>
+
+</html>

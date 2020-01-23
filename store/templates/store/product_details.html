@@ -1,0 +1,83 @@
+{% extends 'store/base.html' %}
+
+{% block title %}
+    商品详情页
+{% endblock %}
+
+{% block lable %}
+    商品详情页
+    <a class="btn btn-primary " v-bind:href="update"
+       style="color: white;float: right">修改</a>
+{% endblock %}
+
+{% block style %}
+    <script src="/static/store_static/jquery/jquery.js"></script>
+    <script src="/static/store_static/vue/vue-resource.js"></script>
+    <script src="/static/store_static/vue/vue.js"></script>
+{% endblock %}
+
+{% block content %}
+    {% verbatim myblock %}
+        <div id="content" class="content">
+            <table class="table">
+                <tr>
+                    <td rowspan="3">
+                        <img style="width: 200px; height: 200px;" v-bind:src="'/static/'+ goods.picture">
+                    </td>
+                    <th>商品名称:</th>
+                    <td>{{ goods.name }}</td>
+                    <th>商品价格:</th>
+                    <td>{{ goods.price }}</td>
+                </tr>
+                <tr>
+                    <th>商品数量:</th>
+                    <td>{{ goods.number }}</td>
+                    <th>商品保质期:</th>
+                    <td>{{ goods.safe_date }}</td>
+                </tr>
+                <tr>
+                    <th>商品状态:</th>
+                    <td v-if="goods.status == 0" colspan="3">下架</td>
+                    <td v-else>上架</td>
+                    <th>种类:</th>
+                    <td>{{ goods_type }}</td>
+                </tr>
+                <tr>
+                    <th colspan="5">商品描述:</th>
+                </tr>
+                <tr>
+                    <td colspan="5" v-html="goods.description">
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% endverbatim myblock %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        Vue.use(VueResource);
+        var vue = new Vue({
+            el: "#content",
+            data: {
+                goods: {},
+                update: '/store/store_update/' +{{ id }},
+                goods_type: [],
+            },
+            created: function () {
+                var url = "/store/goodsView/?id=" + '{{ id }}';
+                this.$http.get(url).then(
+                    function (data) {
+                        console.log(data);
+                        this.goods = data['body']["data"][0];
+                        this.goods_type = data['body']["page_type"];
+                        console.log(this.goods_type)
+                    },
+                    function (errmsg) {
+                        console.log(errmsg)
+                    }
+                )
+            }
+        })
+    </script>
+{% endblock %}

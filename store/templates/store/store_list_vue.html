@@ -1,0 +1,177 @@
+{% extends 'store/base.html' %}
+{% load filters %}
+
+{% block title %}
+    列表详情页
+{% endblock %}
+
+{% block style %}
+    <script src="/static/store_static/jquery/jquery.js"></script>
+    <script src="/static/store_static/vue/vue-resource.js"></script>
+    <script src="/static/store_static/vue/vue.js"></script>
+{% endblock %}
+
+{% block lable %}
+    商品列表详情
+{% endblock %}
+
+{% block content %}
+    {% verbatim myblock %}
+
+        <div class="container-fluid">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+
+                    <select name="dataTable_length" aria-controls="dataTable"
+                            class="custom-control-label" style="margin-top: 6px">
+                        <option value="1">上架商品</option>
+                        <option value="2">下架商品</option>
+                    </select>
+                    <a class="btn btn-primary " v-bind:href="add"
+                       style="color: white;float: right">添加</a>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="content" id="content">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>商品编号</th>
+                                        <th>商品名称</th>
+                                        <th>商品数量</th>
+                                        <th>商品价格</th>
+                                        <th>商品保质期</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    <tr v-for="goods in goods_list">
+                                        <td>
+                                            <a v-bind:href="goods.id">{{ goods.id }}</a>
+                                        </td>
+                                        <td>{{ goods.name }}</td>
+                                        <td>{{ goods.number }}</td>
+                                        <td><input type="text" v-model="goods.price"
+                                                   v-on:blur="chang_price(goods.id,goods.price)">$
+                                        </td>
+                                        <td>{{ goods.safe_date }}</td>
+                                        <td>
+                                            <button class="btn btn-warning" v-if=" goods.status"
+                                                    v-on:click="change_status(goods.id,'down')">下架
+                                            </button>
+                                            <button class="btn btn-success" v-else status="up"
+                                                    v-on:click="change_status(goods.id,'up')">上架
+                                            </button>
+                                            <button class="btn btn-primary">推荐</button>
+                                        </td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate"
+             style="padding-left: 400px">
+            <ul class="pagination">
+                <li class="paginate_button page-item " v-for="page in page_range">
+                    <a v-on:click="get_page(page)" aria-controls="dataTable"
+                       tabindex="0"
+                       class="page-link">{{ page }}</a>
+                </li>
+            </ul>
+        </div>
+    {% endverbatim myblock %}
+{% endblock %}
+
+{% block script %}
+    <script>
+        function flush(data) {
+            this.goods_list = data["body"]['data'];
+            this.page_range = data['body']['page_range'];
+            this.page = data['body']['page'];
+        }
+
+        Vue.use(VueResource);   //声明采用vueResource对象
+        var vue = new Vue({
+            el: "#content",
+            data: {
+                goods_list: [],
+                page_range: [],
+                page:1,
+                add:'/store/store_add/'
+            },
+            methods: {
+                {#价格修改#}
+                chang_price: function (goods_id, val) {
+                    console.log(goods_id);
+                    console.log(val);
+                    {#用于价格的修改#}
+                    this.$http.get('/store/ajax_store_add/', {params: {goods_id: goods_id, price: val}}).then(
+                        function (data) {
+                            console.log(data);
+                            {#window.location.reload()#}
+                        },
+                        function (error) {
+                            console.log(error)
+                        }
+                    )
+                },
+                {#状态修改#}
+                change_status: function (goods_id, status) {
+                    this.$http.get('/store/change_button_down/', {params: {goods_id: goods_id, status: status}}).then(
+                        function (data) {
+                            if (this.page != 1) {
+                                url = "/store/goodsView/?page=" + this.page;
+                            } else {
+                                url = '/store/goodsView/'
+                            }
+                            this.$http.get(url).then(
+                                flush,
+                                 function (error) {
+                                    console.log(error);
+                                }
+                            )
+                        },function (error) {
+                            console.log(error)
+                        }
+
+                    )
+
+                },
+                get_page: function (page) {
+                    var url = '/store/goodsView/?page=' + page;
+                    this.$http.get(url).then(
+                     flush,
+                        function (error) {
+                            console.log(error)
+                        }
+                    )
+                }
+
+            },
+            {# 用于页面的刷新#}
+            created: function () {
+                this.$http.get('/store/goodsView/').then(
+                    function (data) {
+                        console.log(data);
+                        {#flush#}
+                        this.goods_list = data["body"]['data'];
+                        this.page_range = data['body']['page_range']
+                    }
+                )
+            },
+        })
+    </script>
+{% endblock %}

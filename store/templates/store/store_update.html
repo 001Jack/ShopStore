@@ -1,0 +1,105 @@
+{% extends 'store/base.html' %}
+{% block title %}
+    修改商品
+{% endblock %}
+
+{% block lable %}
+    商品修改
+{% endblock %}
+
+
+{% block style %}
+    <script src="/static/ckeditor/ckeditor/ckeditor.js"></script>
+    <script src="/static/store_static/jquery/jquery.js"></script>
+    <script src="/static/store_static/vue/vue-resource.js"></script>
+    <script src="/static/store_static/vue/vue.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <form method="post" enctype="multipart/form-data">
+        <p>
+            <input type="hidden" name="id" v-bind:value="goods.id">
+        </p>
+        <p>
+            <input type="hidden" name="csrfmiddlewaretoken" v-bind:value="csrf_token">
+        </p>
+        <p>
+            <input type="text" class="form-control form-control-user" name="name" placeholder="商品名称:"
+                   v-bind:value="goods.name">
+        </p>
+
+        <p>
+            <input type="text" class="form-control form-control-user" name="price" placeholder="商品价格:"
+                   v-bind:value="goods.price">
+        </p>
+
+        <p>
+            <input type="text" class="form-control form-control-user" name="safe_data" placeholder="保质期:"
+                   v-bind:value="goods.safe_date">
+        </p>
+        <p>
+            <input type="text" class="form-control form-control-user" name="number" placeholder="商品数量:"
+                   v-bind:value="goods.number">
+        </p>
+        <p>
+            <select name="goods_type" class="form-control">
+                {% for ty in type_list %}
+                    {% ifequal ty.id  now_store.goods_type_id %}
+                        <option value="{{ ty.id }}" selected="selected">{{ ty.type_name }}</option>
+                    {% else %}
+                        <option value="{{ ty.id }}">{{ ty.type_name }}</option>
+                    {% endifequal %}
+
+
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+                <textarea name="descript" class="form-control-user form-control"
+                          v-bind:value="goods.description"></textarea>
+        </p>
+        <p>
+            <input type="file" class="form-control form-control-user" name="picture" >
+        </p>
+        <p>
+            <input type="submit" class="form-control-user form-control btn-primary">
+        </p>
+
+
+    </form>
+{% endblock %}
+
+
+{% block script %}
+    <script>
+        CKEDITOR.replace('descript', {
+            uiColor: '#58a18b',
+        })
+    </script>
+    <script>
+        Vue.use(VueResource);
+        var vue = new Vue({
+            el: '#content',
+            data: {
+                goods: {},
+                csrf_token: '{{ csrf_token }}'
+
+            },
+
+            created: function () {
+                var url = '/store/goodsView/?id=' + '{{ id }}';
+                this.$http.get(url).then(
+                    function (data) {
+                        console.log(data);
+                        this.goods = data['body']['data'][0];
+                    },
+                    function (error) {
+                        console.log(error);
+                    }
+                )
+            }
+        })
+    </script>
+{% endblock %}

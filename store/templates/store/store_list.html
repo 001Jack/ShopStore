@@ -1,0 +1,217 @@
+{% extends 'store/base.html' %}
+{% load filters %}
+
+{% block title %}
+    列表详情页
+{% endblock %}
+
+{% block lable %}
+    商品列表详情
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+
+                <select name="dataTable_length" aria-controls="dataTable"
+                        class="custom-control-label" style="margin-top: 6px">
+                    <option value="1">上架商品</option>
+                    <option value="2">下架商品</option>
+                </select>
+                <a class="btn btn-primary  " href="{% url 'store:store_add' %}"
+                   style="color: white;float: right">添加</a>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="content">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>商品编号</th>
+                                    <th>商品名称</th>
+                                    <th>商品数量</th>
+                                    <th>商品价格</th>
+                                    <th>商品保质期</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                {% for g in page_obj %}
+                                    <tr>
+                                        <td>{{ g.id |id_filter }}</td>
+                                        <td>{{ g.name }}</td>
+                                        <td>{{ g.number }}</td>
+                                        <td><input type="text" value="{{ g.price }}" onblur="change_price(this)"
+                                                   goods_id={{ g.id }}>$
+                                        </td>
+                                        <td>{{ g.safe_date }}</td>
+                                        <td>
+                                            {% ifequal g.status  1 %}
+                                                <button class="btn btn-warning"
+                                                        onclick="change_button_down(this,'down')" goods_id ={{ g.id }}>
+                                                    下架
+                                                </button>
+                                                <button class="btn btn-primary">推荐</button>
+                                            {% else %}
+                                                <button class="btn btn-primary" onclick="change_button_down(this,'up')" goods_id ={{ g.id }}>
+                                                    上架
+                                                </button>
+                                                <button class="btn btn-primary">推荐</button>
+                                            {% endifequal %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dataTables_wrapper dt-bootstrap4">
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite"
+                             style="padding-left: 20px;margin-top: 5px">
+                            Showing {{ page_obj.start_index }}
+                            to {{ page_obj.end_index }}
+                            of {{ paginator.count }} entries
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-7">
+                        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate"
+                             style="padding-left: 400px">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="paginate_button page-item previous" id="dataTable_previous">
+                                        <a href="/store/store_list/?page={{ page_obj.previous_page_number }}"
+                                           aria-controls="dataTable"
+                                           data-dt-idx="0" tabindex="0"
+                                           class="page-link">Previous</a>
+                                    </li>
+                                {% else %}
+                                    <li class="paginate_button page-item previous disabled" id="dataTable_previous">
+                                        <a href="#" aria-controls="dataTable" data-dt-idx="0" tabindex="0"
+                                           class="page-link">Previous</a>
+                                    </li>
+                                {% endif %}
+                                {% for f in paginator.page_range %}
+                                    {% if search %}
+                                        {% ifequal page f %}
+                                            <li class="paginate_button page-item disabled">
+                                                <a href="/store/store_list/?page={{ f }}" aria-controls="dataTable"
+                                                   data-dt-idx="{{ f }}"
+                                                   tabindex="0"
+                                                   class="page-link">{{ f }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="paginate_button page-item">
+                                                <a href="/store/store_list/?page={{ f }}&search={{ search }}"
+                                                   aria-controls="dataTable"
+                                                   data-dt-idx="{{ f }}"
+                                                   tabindex="0"
+                                                   class="page-link">{{ f }}</a>
+                                            </li>
+                                        {% endifequal %}
+                                    {% else %}
+                                        {% ifequal page f %}
+                                            <li class="paginate_button page-item disabled">
+                                                <a href="/store/store_list/?page={{ f }}" aria-controls="dataTable"
+                                                   data-dt-idx="{{ f }}"
+                                                   tabindex="0"
+                                                   class="page-link">{{ f }}</a>
+                                            </li>
+                                        {% else %}
+                                            <li class="paginate_button page-item">
+                                                <a href="/store/store_list/?page={{ f }}"
+                                                   aria-controls="dataTable"
+                                                   data-dt-idx="{{ f }}"
+                                                   tabindex="0"
+                                                   class="page-link">{{ f }}</a>
+                                            </li>
+                                        {% endifequal %}
+                                    {% endif %}
+
+                                {% endfor %}
+
+
+                                {% if page_obj.has_next %}
+                                    <li class="paginate_button page-item next" id="dataTable_next">
+                                        <a href="/store/store_list/?page={{ page_obj.next_page_number }}"
+                                           aria-controls="dataTable"
+                                           data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                    </li>
+                                {% else %}
+                                    <li class="paginate_button page-item next disabled" id="dataTable_next">
+                                        <a href="#" aria-controls="dataTable" data-dt-idx="7" tabindex="0"
+                                           class="page-link">Next</a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="/static/store_static/jquery/jquery.js"></script>
+
+    {#    价格保存Ajax#}
+
+    <script>
+
+        {#        价格修改#}
+
+        function change_price(obj) {
+            var price = $(obj).val();
+            var id = $(obj).attr("goods_id");
+
+            var url = "/store/ajax_store_add/?goods_id=" + id + "&price=" + price;
+
+            $.ajax({
+                url: url,
+                type: 'get',
+                data: '',
+                success: function (data) {
+
+                },
+                error: function (errmsg) {
+
+                }
+            })
+        }
+
+        {#    下架商品#}
+
+        function change_button_down(obj, status) {
+            console.log('111');
+            var id = $(obj).attr('goods_id');
+            var url = '/store/change_button_down/?goods_id=' + id + '&status=' + status;
+            $.ajax({
+                url: url,
+                type: 'get',
+                data: '',
+                success: function (data) {
+                    console.log(data);
+                    window.location.reload()
+                },
+                error: function (errmsg) {
+                    console.log(errmsg);
+                }
+            })
+        }
+
+    </script>
+{% endblock %}
